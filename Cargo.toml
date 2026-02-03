@@ -7,6 +7,7 @@ rust-version = "1.86"
 [dependencies]
 crossterm = "0.27" 
 zune-jpeg = "0.5.12"
+zune-core = "0.5.1"
 
 [profile.dev.package.zune-jpeg]
 opt-level = 3

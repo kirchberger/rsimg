@@ -1,9 +1,10 @@
 // Will slowly reduce external dependancies
-use std::{env,io,string,time::Duration};
+use std::{env,io::{BufReader},string,time::Duration,any::type_name,fs::read,ptr::null};
 use crossterm::{event::poll};
-//struct image
 
 pub mod screen;
+pub mod image;
+
 
 fn usr_cancel() {
     loop {
@@ -22,17 +23,40 @@ fn main() -> Result<(),String> {
         return Err(String::from("Incorrect number of arguments"));
     }
     
+    let file = String::from("./testImages/japanese_maple.jpg");
+    let mut image = image::Image{
+        pixels : Vec::new(),
+        width : 0,
+        height : 0
+    };
+    let mut image_downsize = image::Image{
+        pixels : Vec::new(),
+        width : 0,
+        height : 0
+    };
+    let mut window = screen::Window{
+        width : 0,
+        height : 0
+    };
+
     // decode image 
+    image::decode_file(& file, & mut image);
+    println!("{} x {}", image.width,image.height);
+    println!("{}", image.pixels.len());
     
-    // down size image to correct resolution
+    // Setup screen and get window size
+    screen::setup(& mut window);
 
+    // Down size image to correct resolution
+    image::downsize(& image, &mut image_downsize, &window);
 
-    // render image
-    screen::setup();
-    screen::render();
+    // Render image
+    screen::render(& image, & window);
 
-    // wait for cancel input
+    // Wait for cancel input
     usr_cancel();
+
+    screen::exit();
     
     Ok(())
 }

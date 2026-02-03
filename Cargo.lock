@@ -119,6 +119,7 @@ name = "rsimg"
 version = "0.1.0"
 dependencies = [
  "crossterm",
+ "zune-core",
  "zune-jpeg",
 ]
 
