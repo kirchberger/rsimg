@@ -39,10 +39,8 @@ fn main() -> Result<(),String> {
         height : 0
     };
 
-    // decode image 
+    // Decode image 
     image::decode_file(& file, & mut image);
-    println!("{} x {}", image.width,image.height);
-    println!("{}", image.pixels.len());
     
     // Setup screen and get window size
     screen::setup(& mut window);
@@ -51,12 +49,13 @@ fn main() -> Result<(),String> {
     image::downsize(& image, &mut image_downsize, &window);
 
     // Render image
-    screen::render(& image, & window);
+    screen::render(& image_downsize, & window);
 
     // Wait for cancel input
     usr_cancel();
 
+    // Exit alternate screen
     screen::exit();
-    
+    println!("{:?}",image_downsize.pixels);
     Ok(())
 }
