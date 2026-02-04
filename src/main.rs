@@ -1,5 +1,5 @@
 // Will slowly reduce external dependancies
-use std::{env,io::{BufReader},string,time::Duration,any::type_name,fs::read,ptr::null};
+use std::{env,time::Duration};
 use crossterm::{event::poll};
 
 pub mod screen;
@@ -23,7 +23,7 @@ fn main() -> Result<(),String> {
         return Err(String::from("Incorrect number of arguments"));
     }
     
-    let file = String::from("./testImages/japanese_maple.jpg");
+    let file = & args[1];
     let mut image = image::Image{
         pixels : Vec::new(),
         width : 0,
@@ -40,10 +40,10 @@ fn main() -> Result<(),String> {
     };
 
     // Decode image 
-    image::decode_file(& file, & mut image);
+    image::decode_file(file, & mut image).expect("Issue opening or decoding the file");
     
     // Setup screen and get window size
-    screen::setup(& mut window);
+    screen::setup(& mut window).unwrap();
 
     // Down size image to correct resolution
     image::downsize(& image, &mut image_downsize, &window);
@@ -55,6 +55,7 @@ fn main() -> Result<(),String> {
     usr_cancel();
 
     // Exit alternate screen
-    screen::exit();
+    screen::exit().unwrap();
+
     Ok(())
 }

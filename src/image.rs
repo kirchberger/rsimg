@@ -1,5 +1,6 @@
 use zune_jpeg::JpegDecoder;
-use std::{io::{BufReader},string,any::type_name,fs::read};
+//use zune_png::PngDecoder;
+use std::io::BufReader;
 
 use crate::screen;
 
@@ -19,7 +20,6 @@ pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
 
-
     Ok(())
 }
 
@@ -27,7 +27,7 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
 
     // Find image downsampled size
     let image_ratio = image.width as f64 / image.height as f64;
-    let window_ratio = (5*window.width) as f64 / (6*window.height) as f64;
+    let window_ratio = (5*window.width) as f64 / (6*2*window.height) as f64;
     
     if image_ratio > window_ratio {
         image_downsize.width = window.width;
