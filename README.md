@@ -5,5 +5,5 @@ Terminal image viewer written in rust which displays images as unicode charactor
 PNG
 GIF
 Error handling
-Buffering writes
-handle text box shape
+
+General cleanup and commenting

@@ -29,14 +29,16 @@ fn main() -> Result<(),String> {
         width : 0,
         height : 0
     };
-    let mut image_downsize = image::Image{
+    let mut image_downsample = image::Image{
         pixels : Vec::new(),
         width : 0,
         height : 0
     };
     let mut window = screen::Window{
         width : 0,
-        height : 0
+        height : 0,
+        columns : 0,
+        rows : 0
     };
 
     // Decode image 
@@ -46,10 +48,10 @@ fn main() -> Result<(),String> {
     screen::setup(& mut window).unwrap();
 
     // Down size image to correct resolution
-    image::downsize(& image, &mut image_downsize, &window);
+    image::downsize(& image, &mut image_downsample, &window);
 
     // Render image
-    screen::render(& image_downsize, & window);
+    screen::render(& image_downsample, & window);
 
     // Wait for cancel input
     usr_cancel();

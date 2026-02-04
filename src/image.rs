@@ -25,21 +25,25 @@ pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
 
 pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen::Window) {
 
-    // Find image downsampled size
+    // width to height ratio of image and window
     let image_ratio = image.width as f64 / image.height as f64;
-    let window_ratio = (5*window.width) as f64 / (6*2*window.height) as f64;
+    let window_ratio = window.width as f64 / window.height as f64;
+
+    // terminal charactor boxes are not always the same siz and this accounts for this 
+    let box_width = window.width / window.columns;
+    let box_height = window.height / window.rows;
     
-    if image_ratio > window_ratio {
-        image_downsize.width = window.width;
-        image_downsize.height = (6 * image.height * image_downsize.width)/(5 * image.width);
+    if image_ratio > window_ratio { // Image is wider the window
+        image_downsize.width = window.columns;
+        image_downsize.height = (2 * box_width * image.height * window.columns) / (box_height * image.width);
     }
-    else if image_ratio < window_ratio {
-        image_downsize.height = 2*window.height;
-        image_downsize.width = (5 * image.width * image_downsize.height)/(6 * image.height);
+    else if image_ratio < window_ratio { // Window is wider than image
+        image_downsize.height = 2*window.rows;
+        image_downsize.width = (box_height * image.width * window.rows) / (box_width * image.height);
     }
-    else {
-        image_downsize.width = window.width;
-        image_downsize.height = 2*window.height;
+    else { // Image perfectly fills window
+        image_downsize.width = window.columns;
+        image_downsize.height = 2 * window.rows;
     }
 
     // Downsample image by averaging samples
@@ -54,33 +58,37 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
     let mut high_range_row : usize = 0;
     
     for i in 0..image_downsize.height { // Rows in downsampled image
+
         low_range_row = high_range_row;
-        high_range_row = ((i+1)*image.height)/image_downsize.height;
+        high_range_row = ((i + 1) * image.height) / image_downsize.height;
 
         high_range_col = 0;
 
         for j in 0..image_downsize.width { // Rows in downsampled image
+
             red = 0;        
             green = 0;        
             blue = 0;        
 
             low_range_col = high_range_col;
-            high_range_col = ((j+1)*image.width)/image_downsize.width;
+            high_range_col = ((j + 1) * image.width) / image_downsize.width;
             
             for k in low_range_row..high_range_row { 
                 for l in low_range_col..high_range_col { // Rows which count towards the pixel
-                    red += image.pixels[3*((k*image.width) + l)] as usize;
-                    green += image.pixels[3*((k*image.width) + l) + 1] as usize;
-                    blue += image.pixels[3*((k*image.width) + l) + 2] as usize;
+                                                         //
+                    red += image.pixels[3 * ((k * image.width) + l)] as usize;
+                    green += image.pixels[3 * ((k * image.width) + l) + 1] as usize;
+                    blue += image.pixels[3 * ((k * image.width) + l) + 2] as usize;
                 }
             }
-            image_downsize.pixels[3*((i*image_downsize.width) + j)] = 
-                (red/((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
-            image_downsize.pixels[3*((i*image_downsize.width) + j)+1] = 
-                (green/((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
-            image_downsize.pixels[3*((i*image_downsize.width) + j)+2] = 
-                (blue/((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
-            
+            image_downsize.pixels[3 * ((i * image_downsize.width) + j)] = 
+                (red / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
+
+            image_downsize.pixels[3 * ((i * image_downsize.width) + j) + 1] = 
+                (green / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
+
+            image_downsize.pixels[3 * ((i * image_downsize.width) + j) + 2] = 
+                (blue  / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
         }
     }
 }
