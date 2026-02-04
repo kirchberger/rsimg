@@ -1,6 +1,5 @@
 use zune_jpeg::JpegDecoder;
-//use zune_png::PngDecoder;
-use std::io::BufReader;
+use std::{io::BufReader};
 
 use crate::screen;
 
@@ -10,19 +9,36 @@ pub struct Image {
     pub height : usize,
 }
 
-pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
+fn decode_jpeg(file : & String, image : &mut Image) {
 
     let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
     let mut decoder = JpegDecoder::new(file_contents);
     image.pixels = decoder.decode().unwrap();
-    let image_info = decoder.info().unwrap();
     
+    let image_info = decoder.info().unwrap();
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
+}
+
+fn decode_png(_file : & String, _image : &mut Image) {
+    panic!("png not supported yet");
+}
+    
+
+pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
+
+    let ext = file.split('.').last().unwrap();
+
+    match ext {
+        "jpg" | "jpeg" | "JPG" | "JPEG"  => decode_jpeg(file, image),
+        "png" => decode_png(file, image),
+        _ => panic!("unknown file type"),
+    }
 
     Ok(())
 }
 
+// not downsampled in a good way at this point
 pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen::Window) {
 
     // width to height ratio of image and window
@@ -47,7 +63,6 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
     }
 
     // Downsample image by averaging samples
-    // Cannot find the format of the the byte stream so assuming R,G,B of (0,0) then (0,1) ect
     image_downsize.pixels = vec![0; 3 * image_downsize.width * image_downsize.height];
     let mut red : usize;        
     let mut green : usize;        
@@ -56,12 +71,12 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
     let mut high_range_col : usize;
     let mut low_range_row : usize ;
     let mut high_range_row : usize = 0;
+
     
     for i in 0..image_downsize.height { // Rows in downsampled image
 
         low_range_row = high_range_row;
         high_range_row = ((i + 1) * image.height) / image_downsize.height;
-
         high_range_col = 0;
 
         for j in 0..image_downsize.width { // Rows in downsampled image
