@@ -27,15 +27,15 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
 
     // Find image downsampled size
     let image_ratio = image.width as f64 / image.height as f64;
-    let window_ratio = (2*window.width) as f64 / (3*window.height) as f64;
+    let window_ratio = (5*window.width) as f64 / (6*window.height) as f64;
     
     if image_ratio > window_ratio {
         image_downsize.width = window.width;
-        image_downsize.height = (3 * image.height * image_downsize.width)/(2 * image.width);
+        image_downsize.height = (6 * image.height * image_downsize.width)/(5 * image.width);
     }
     else if image_ratio < window_ratio {
         image_downsize.height = 2*window.height;
-        image_downsize.width = (2 * image.width * image_downsize.height)/(3 * image.height);
+        image_downsize.width = (5 * image.width * image_downsize.height)/(6 * image.height);
     }
     else {
         image_downsize.width = window.width;

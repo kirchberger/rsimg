@@ -56,6 +56,5 @@ fn main() -> Result<(),String> {
 
     // Exit alternate screen
     screen::exit();
-    println!("{:?}",image_downsize.pixels);
     Ok(())
 }
