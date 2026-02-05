@@ -19,11 +19,14 @@ pub struct Window {
 pub fn setup() -> std::io::Result<()> {
 
     let mut stdout = std::io::stdout();
+    let mut bufout = BufWriter::new(std::io::stdout());
+    let disable_cursor : [u8; 6] = [27, b'[', b'?', b'2', b'5', b'l'];
 
     execute!(stdout, EnterAlternateScreen)?;
-
     enable_raw_mode()?;
 
+    bufout.write(& disable_cursor).unwrap();
+    bufout.flush().unwrap();
 
     Ok(())
 }
@@ -32,10 +35,14 @@ pub fn setup() -> std::io::Result<()> {
 pub fn exit() -> std::io::Result<()> {
 
     let mut stdout = std::io::stdout();
-
+    let mut bufout = BufWriter::new(std::io::stdout());
+    let enable_cursor : [u8; 6] = [27, b'[', b'?', b'2', b'5', b'h'];
 
     execute!(stdout, LeaveAlternateScreen)?;
     disable_raw_mode()?;
+
+    bufout.write(& enable_cursor).unwrap();
+    bufout.flush().unwrap();
 
     Ok(())
 }

@@ -1,10 +1,25 @@
 use zune_jpeg::JpegDecoder;
+use zune_png::PngDecoder;
+use zune_core::colorspace::ColorSpace;
 use std::{io::BufReader};
 
 pub struct Image {
     pub pixels : Vec<u8>,
     pub width : usize,
     pub height : usize,
+}
+
+fn rgba_to_rgb(image : &mut Image) {
+
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+
+    for i in 0..length {
+        new[3 * i] = image.pixels[4 * i];
+        new[3 * i + 1] = image.pixels[4 * i + 1];
+        new[3 * i + 2] = image.pixels[4 * i + 2];
+    }
+    image.pixels = new;
 }
 
 fn decode_jpeg(file : & String, image : &mut Image) {
@@ -16,10 +31,29 @@ fn decode_jpeg(file : & String, image : &mut Image) {
     let image_info = decoder.info().unwrap();
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
+
+    match decoder.input_colorspace().unwrap() {
+        ColorSpace::RGB => (),
+        ColorSpace::RGBA => rgba_to_rgb(image),
+        _ => (),
+    }
 }
 
-fn decode_png(_file : & String, _image : &mut Image) {
-    panic!("png not supported yet");
+fn decode_png(file : & String, image : &mut Image) {
+
+    let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
+    let mut decoder = PngDecoder::new(file_contents);
+    image.pixels = decoder.decode_raw().unwrap();
+    
+    let image_info = decoder.info().unwrap();
+    image.width = image_info.width as usize;
+    image.height = image_info.height as usize;
+
+    match decoder.colorspace().unwrap() {
+        ColorSpace::RGB => (),
+        ColorSpace::RGBA => rgba_to_rgb(image),
+        _ => (),
+    }
 }
     
 
