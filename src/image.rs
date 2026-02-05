@@ -1,8 +1,6 @@
 use zune_jpeg::JpegDecoder;
 use std::{io::BufReader};
 
-use crate::screen;
-
 pub struct Image {
     pub pixels : Vec<u8>,
     pub width : usize,
@@ -39,31 +37,10 @@ pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
 }
 
 // not downsampled in a good way at this point
-pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen::Window) {
-
-    // width to height ratio of image and window
-    let image_ratio = image.width as f64 / image.height as f64;
-    let window_ratio = window.width as f64 / window.height as f64;
-
-    // terminal charactor boxes are not always the same siz and this accounts for this 
-    let box_width = window.width / window.columns;
-    let box_height = window.height / window.rows;
-    
-    if image_ratio > window_ratio { // Image is wider the window
-        image_downsize.width = window.columns;
-        image_downsize.height = (2 * box_width * image.height * window.columns) / (box_height * image.width);
-    }
-    else if image_ratio < window_ratio { // Window is wider than image
-        image_downsize.height = 2*window.rows;
-        image_downsize.width = (box_height * image.width * window.rows) / (box_width * image.height);
-    }
-    else { // Image perfectly fills window
-        image_downsize.width = window.columns;
-        image_downsize.height = 2 * window.rows;
-    }
+pub fn downsample(image : & Image, image_downsample : &mut Image) {
 
     // Downsample image by averaging samples
-    image_downsize.pixels = vec![0; 3 * image_downsize.width * image_downsize.height];
+    image_downsample.pixels = vec![0; 3 * image_downsample.width * image_downsample.height];
     let mut red : usize;        
     let mut green : usize;        
     let mut blue : usize;        
@@ -73,20 +50,20 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
     let mut high_range_row : usize = 0;
 
     
-    for i in 0..image_downsize.height { // Rows in downsampled image
+    for i in 0..image_downsample.height { // Rows in downsampled image
 
         low_range_row = high_range_row;
-        high_range_row = ((i + 1) * image.height) / image_downsize.height;
+        high_range_row = ((i + 1) * image.height) / image_downsample.height;
         high_range_col = 0;
 
-        for j in 0..image_downsize.width { // Rows in downsampled image
+        for j in 0..image_downsample.width { // Rows in downsampled image
 
             red = 0;        
             green = 0;        
             blue = 0;        
 
             low_range_col = high_range_col;
-            high_range_col = ((j + 1) * image.width) / image_downsize.width;
+            high_range_col = ((j + 1) * image.width) / image_downsample.width;
             
             for k in low_range_row..high_range_row { 
                 for l in low_range_col..high_range_col { // Rows which count towards the pixel
@@ -96,13 +73,13 @@ pub fn downsize(image : & Image, image_downsize : &mut Image, window : & screen:
                     blue += image.pixels[3 * ((k * image.width) + l) + 2] as usize;
                 }
             }
-            image_downsize.pixels[3 * ((i * image_downsize.width) + j)] = 
+            image_downsample.pixels[3 * ((i * image_downsample.width) + j)] = 
                 (red / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
 
-            image_downsize.pixels[3 * ((i * image_downsize.width) + j) + 1] = 
+            image_downsample.pixels[3 * ((i * image_downsample.width) + j) + 1] = 
                 (green / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
 
-            image_downsize.pixels[3 * ((i * image_downsize.width) + j) + 2] = 
+            image_downsample.pixels[3 * ((i * image_downsample.width) + j) + 2] = 
                 (blue  / ((high_range_row - low_range_row) * (high_range_col - low_range_col))) as u8;
         }
     }
