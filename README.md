@@ -11,6 +11,6 @@ Currently uses crossterm and zune as dependancies.
 
 # To Do Items
 
-GIF
+IF
 different colourspaces
 different pixel formats

@@ -23,23 +23,52 @@ fn rgba_to_rgb(image : &mut Image) {
 }
 
 fn ycbcr_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+    panic!("YCbCr not supported");
 }
 
 fn luma_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+
+    for i in 0..length {
+        new[3 * i] = image.pixels[i];
+        new[3 * i + 1] = image.pixels[i];
+        new[3 * i + 2] = image.pixels[i];
+    }
+    image.pixels = new;
 }
 
-fn lumma_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+fn lumaa_to_rgb(image : &mut Image) {
+
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+
+    for i in 0..length {
+        new[3 * i] = image.pixels[2 * i];
+        new[3 * i + 1] = image.pixels[2 * i];
+        new[3 * i + 2] = image.pixels[2 * i];
+    }
+    image.pixels = new;
 }
 
 fn tcck_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+    panic!("Not implemented for tcck colorspace");
 }
 
 fn cmyk_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+    
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut temp : usize;
+
+    for i in 0..length {
+        temp = 255 - image.pixels[4 * i + 3] as usize;
+        new[3 * i] = (((255 - image.pixels[4 * i] as usize) * temp)/255) as u8;
+        new[3 * i + 1] = (((255 - image.pixels[4 * i + 1] as usize) * temp)/255) as u8;
+        new[3 * i + 2] = (((255 - image.pixels[4 * i + 2] as usize) * temp)/255) as u8;
+    }
+    image.pixels = new;
 }
 
 fn bgr_to_rgb(image : &mut Image) {
@@ -103,7 +132,7 @@ fn decode_jpeg(file : & String, image : &mut Image) {
         ColorSpace::RGBA    => rgba_to_rgb(image),
         ColorSpace::YCbCr   => ycbcr_to_rgb(image),
         ColorSpace::Luma    => luma_to_rgb(image),
-        ColorSpace::LumaA   => lumma_to_rgb(image),
+        ColorSpace::LumaA   => lumaa_to_rgb(image),
         ColorSpace::YCCK    => tcck_to_rgb(image),
         ColorSpace::CMYK    => cmyk_to_rgb(image),
         ColorSpace::BGR     => bgr_to_rgb(image),
