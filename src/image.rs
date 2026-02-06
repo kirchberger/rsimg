@@ -22,9 +22,9 @@ fn rgba_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
-fn ycbcr_to_rgb(_image : &mut Image) {
+/*fn ycbcr_to_rgb(_image : &mut Image) {
     panic!("YCbCr not supported");
-}
+}*/
 
 fn luma_to_rgb(image : &mut Image) {
 
@@ -52,7 +52,7 @@ fn lumaa_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
-fn tcck_to_rgb(_image : &mut Image) {
+/*fn tcck_to_rgb(_image : &mut Image) {
     panic!("Not implemented for tcck colorspace");
 }
 
@@ -115,7 +115,7 @@ fn hsl_to_rgb(_image : &mut Image) {
 
 fn hsv_to_rgb(_image : &mut Image) {
     panic!("Not implemented for hsv colourspace");
-}
+}*/
 
 fn decode_jpeg(file : & String, image : &mut Image) {
 
@@ -142,21 +142,13 @@ fn decode_png(file : & String, image : &mut Image) {
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
 
-    // png does not support selection of colour space
+    // These are all the png supported colourspaces
     match decoder.colorspace().unwrap() {
         ColorSpace::RGB     => (),
         ColorSpace::RGBA    => rgba_to_rgb(image),
-        ColorSpace::YCbCr   => ycbcr_to_rgb(image),
         ColorSpace::Luma    => luma_to_rgb(image),
         ColorSpace::LumaA   => lumaa_to_rgb(image),
-        ColorSpace::YCCK    => tcck_to_rgb(image),
-        ColorSpace::CMYK    => cmyk_to_rgb(image),
-        ColorSpace::BGR     => bgr_to_rgb(image),
-        ColorSpace::BGRA    => bgra_to_rgb(image),
-        ColorSpace::ARGB    => argb_to_rgb(image),
-        ColorSpace::HSL     => hsl_to_rgb(image),
-        ColorSpace::HSV     => hsv_to_rgb(image),
-        _ => panic!("this colourspace is not supported"),
+        _ => (),
     }
 }
     
