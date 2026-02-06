@@ -120,40 +120,29 @@ fn hsv_to_rgb(_image : &mut Image) {
 fn decode_jpeg(file : & String, image : &mut Image) {
 
     let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
+    // Default option is to decode into RGB colourspace
     let mut decoder = JpegDecoder::new(file_contents);
+
     image.pixels = decoder.decode().unwrap();
     
     let image_info = decoder.info().unwrap();
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
 
-    match decoder.input_colorspace().unwrap() {
-        ColorSpace::RGB     => (),
-        ColorSpace::RGBA    => rgba_to_rgb(image),
-        ColorSpace::YCbCr   => ycbcr_to_rgb(image),
-        ColorSpace::Luma    => luma_to_rgb(image),
-        ColorSpace::LumaA   => lumaa_to_rgb(image),
-        ColorSpace::YCCK    => tcck_to_rgb(image),
-        ColorSpace::CMYK    => cmyk_to_rgb(image),
-        ColorSpace::BGR     => bgr_to_rgb(image),
-        ColorSpace::BGRA    => bgra_to_rgb(image),
-        ColorSpace::ARGB    => argb_to_rgb(image),
-        ColorSpace::HSL     => hsl_to_rgb(image),
-        ColorSpace::HSV     => hsv_to_rgb(image),
-        _ => panic!("this colourspace is not supported"),
-    }
 }
 
 fn decode_png(file : & String, image : &mut Image) {
 
     let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
     let mut decoder = PngDecoder::new(file_contents);
+    
     image.pixels = decoder.decode_raw().unwrap();
     
     let image_info = decoder.info().unwrap();
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
 
+    // png does not support selection of colour space
     match decoder.colorspace().unwrap() {
         ColorSpace::RGB     => (),
         ColorSpace::RGBA    => rgba_to_rgb(image),
