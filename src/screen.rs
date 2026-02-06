@@ -1,9 +1,7 @@
 use std::{time::Duration,io::{BufWriter, Write}};
 use crossterm::{
     event::poll, 
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, window_size, enable_raw_mode,
-        disable_raw_mode,BeginSynchronizedUpdate, EndSynchronizedUpdate},
+    terminal::{window_size, enable_raw_mode, disable_raw_mode,},
 };
 
 use crate::image;
@@ -18,15 +16,15 @@ pub struct Window {
 // Set alternate buffer
 pub fn setup() -> std::io::Result<()> {
 
-    let mut stdout = std::io::stdout();
     let mut bufout = BufWriter::new(std::io::stdout());
     let disable_cursor : [u8; 6] = [27, b'[', b'?', b'2', b'5', b'l'];
+    let enable_alt_buffer : [u8; 8] = [27, b'[', b'?', b'1', b'0', b'4', b'9', b'h'];
 
-    execute!(stdout, EnterAlternateScreen)?;
-    enable_raw_mode()?;
-
+    bufout.write(& enable_alt_buffer).unwrap();
     bufout.write(& disable_cursor).unwrap();
     bufout.flush().unwrap();
+    
+    enable_raw_mode()?;
 
     Ok(())
 }
@@ -34,13 +32,13 @@ pub fn setup() -> std::io::Result<()> {
 // Exit alternate buffer
 pub fn exit() -> std::io::Result<()> {
 
-    let mut stdout = std::io::stdout();
     let mut bufout = BufWriter::new(std::io::stdout());
     let enable_cursor : [u8; 6] = [27, b'[', b'?', b'2', b'5', b'h'];
+    let disable_alt_buffer  : [u8; 8] = [27, b'[', b'?', b'1', b'0', b'4', b'9', b'l'];
 
-    execute!(stdout, LeaveAlternateScreen)?;
     disable_raw_mode()?;
 
+    bufout.write(& disable_alt_buffer).unwrap();
     bufout.write(& enable_cursor).unwrap();
     bufout.flush().unwrap();
 
@@ -71,20 +69,22 @@ pub fn usr_cancel() {
 pub fn render_image(image : & image::Image, window : & Window) {
 
     let acsii_lookup : [u8; 10] = [b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9'];
-    let reset : [u8; 4] = [27, b'[', b'0', b'm'];
     let mut forebuf : [u8; 19] = [27, b'[', b'3', b'8', b';', b'2', b';', b'0', b'0',b'0', b';', b'0', b'0' ,b'0', b';', b'0', b'0', b'0', b'm'];
     let mut backbuf : [u8; 19] = [27, b'[', b'4', b'8', b';', b'2', b';', b'0', b'5',b'5', b';', b'2', b'5' ,b'5', b';', b'2', b'5', b'5', b'm'];
     let blank : [u8; 1] = [b' '];
     let unicode : [u8; 3] = [0b11100010, 0b10010110, 0b10000000];
     let clear : [u8; 6] = [27, b'[', b'H', 27, b'[', b'J'];
+    let reset : [u8; 4] = [27, b'[', b'0', b'm'];
+    let begin_sync_update : [u8; 8] = [27, b'[', b'?', b'2', b'0', b'2', b'6', b'h'];
+    let end_sync_update : [u8; 8] = [27, b'[', b'?', b'2', b'0', b'2', b'6', b'l'];
 
     let mut temp : usize;
     let mut temp_index : usize;
     
-    // All code below produces one frame
-    execute!(std::io::stdout(),BeginSynchronizedUpdate).unwrap();    
     let mut bufout = BufWriter::new(std::io::stdout());
 
+    // All code below produces one frame
+    bufout.write(& begin_sync_update).unwrap();
     bufout.write(& clear).unwrap();
 
     // Pad top of image
@@ -192,6 +192,7 @@ pub fn render_image(image : & image::Image, window : & Window) {
     }
     
     // Flush buffer writes and update screen
+    bufout.write(& end_sync_update).unwrap();
     bufout.flush().unwrap();
-    execute!(std::io::stdout(),EndSynchronizedUpdate).unwrap();    
+    //execute!(std::io::stdout(),EndSynchronizedUpdate).unwrap();    
 }

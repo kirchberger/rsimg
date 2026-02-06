@@ -22,6 +22,72 @@ fn rgba_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
+fn ycbcr_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn luma_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn lumma_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn tcck_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn cmyk_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn bgr_to_rgb(image : &mut Image) {
+
+    let length = image.width * image.height;
+    let mut temp : u8;
+
+    for i in 0..length {
+        temp = image.pixels[3 * i];
+        image.pixels[3 * i] = image.pixels[3 * i + 2];
+        image.pixels[3 * i + 2] = temp;
+    }
+}
+
+fn bgra_to_rgb(image : &mut Image) {
+
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+
+    for i in 0..length {
+        new[3 * i] = image.pixels[4 * i + 2];
+        new[3 * i + 1] = image.pixels[4 * i + 1];
+        new[3 * i + 2] = image.pixels[4 * i];
+    }
+    image.pixels = new;
+}
+
+fn argb_to_rgb(image : &mut Image) {
+
+    let length = image.width * image.height;
+    let mut new : Vec<u8> = vec![0; 3*length];
+
+    for i in 0..length {
+        new[3 * i] = image.pixels[4 * i + 1];
+        new[3 * i + 1] = image.pixels[4 * i + 2];
+        new[3 * i + 2] = image.pixels[4 * i + 3];
+    }
+    image.pixels = new;
+}
+
+fn hsl_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
+fn hsv_to_rgb(image : &mut Image) {
+    panic!("Not implemented");
+}
+
 fn decode_jpeg(file : & String, image : &mut Image) {
 
     let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
@@ -33,9 +99,19 @@ fn decode_jpeg(file : & String, image : &mut Image) {
     image.height = image_info.height as usize;
 
     match decoder.input_colorspace().unwrap() {
-        ColorSpace::RGB => (),
-        ColorSpace::RGBA => rgba_to_rgb(image),
-        _ => (),
+        ColorSpace::RGB     => (),
+        ColorSpace::RGBA    => rgba_to_rgb(image),
+        ColorSpace::YCbCr   => ycbcr_to_rgb(image),
+        ColorSpace::Luma    => luma_to_rgb(image),
+        ColorSpace::LumaA   => lumma_to_rgb(image),
+        ColorSpace::YCCK    => tcck_to_rgb(image),
+        ColorSpace::CMYK    => cmyk_to_rgb(image),
+        ColorSpace::BGR     => bgr_to_rgb(image),
+        ColorSpace::BGRA    => bgra_to_rgb(image),
+        ColorSpace::ARGB    => argb_to_rgb(image),
+        ColorSpace::HSL     => hsl_to_rgb(image),
+        ColorSpace::HSV     => hsv_to_rgb(image),
+        _ => panic!("this colourspace is not supported"),
     }
 }
 
@@ -50,9 +126,19 @@ fn decode_png(file : & String, image : &mut Image) {
     image.height = image_info.height as usize;
 
     match decoder.colorspace().unwrap() {
-        ColorSpace::RGB => (),
-        ColorSpace::RGBA => rgba_to_rgb(image),
-        _ => (),
+        ColorSpace::RGB     => (),
+        ColorSpace::RGBA    => rgba_to_rgb(image),
+        ColorSpace::YCbCr   => ycbcr_to_rgb(image),
+        ColorSpace::Luma    => luma_to_rgb(image),
+        ColorSpace::LumaA   => lumma_to_rgb(image),
+        ColorSpace::YCCK    => tcck_to_rgb(image),
+        ColorSpace::CMYK    => cmyk_to_rgb(image),
+        ColorSpace::BGR     => bgr_to_rgb(image),
+        ColorSpace::BGRA    => bgra_to_rgb(image),
+        ColorSpace::ARGB    => argb_to_rgb(image),
+        ColorSpace::HSL     => hsl_to_rgb(image),
+        ColorSpace::HSV     => hsv_to_rgb(image),
+        _ => panic!("this colourspace is not supported"),
     }
 }
     
