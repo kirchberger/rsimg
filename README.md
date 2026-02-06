@@ -1,16 +1,12 @@
 # rsimg
 
 Terminal image viewer written in rust which displays images with unicode charactors.
-
-Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour.
-
+Currently uses crossterm and zune as dependancies.
 This is a inspired by [catimg](https://github.com/posva/catimg/tree/main?tab=readme-ov-file).
 
-Currently uses crossterm and zune as dependancies.
+Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour, and will fit to window size.
+Use with rsimg {file_path}
 
 
 # To Do Items
 
-IF
-different colourspaces
-different pixel formats

@@ -1,7 +1,7 @@
 use std::{time::Duration,io::{BufWriter, Write}};
 use crossterm::{
     event::poll, 
-    terminal::{window_size, enable_raw_mode, disable_raw_mode,},
+    terminal::{window_size, enable_raw_mode, disable_raw_mode},
 };
 
 use crate::image;

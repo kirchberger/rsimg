@@ -12,7 +12,7 @@ pub struct Image {
 fn rgba_to_rgb(image : &mut Image) {
 
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
 
     for i in 0..length {
         new[3 * i] = image.pixels[4 * i];
@@ -22,14 +22,14 @@ fn rgba_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
-fn ycbcr_to_rgb(image : &mut Image) {
+fn ycbcr_to_rgb(_image : &mut Image) {
     panic!("YCbCr not supported");
 }
 
 fn luma_to_rgb(image : &mut Image) {
 
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
 
     for i in 0..length {
         new[3 * i] = image.pixels[i];
@@ -42,7 +42,7 @@ fn luma_to_rgb(image : &mut Image) {
 fn lumaa_to_rgb(image : &mut Image) {
 
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
 
     for i in 0..length {
         new[3 * i] = image.pixels[2 * i];
@@ -52,14 +52,14 @@ fn lumaa_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
-fn tcck_to_rgb(image : &mut Image) {
+fn tcck_to_rgb(_image : &mut Image) {
     panic!("Not implemented for tcck colorspace");
 }
 
 fn cmyk_to_rgb(image : &mut Image) {
     
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
     let mut temp : usize;
 
     for i in 0..length {
@@ -86,7 +86,7 @@ fn bgr_to_rgb(image : &mut Image) {
 fn bgra_to_rgb(image : &mut Image) {
 
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
 
     for i in 0..length {
         new[3 * i] = image.pixels[4 * i + 2];
@@ -99,7 +99,7 @@ fn bgra_to_rgb(image : &mut Image) {
 fn argb_to_rgb(image : &mut Image) {
 
     let length = image.width * image.height;
-    let mut new : Vec<u8> = vec![0; 3*length];
+    let mut new : Vec<u8> = vec![0; 3 * length];
 
     for i in 0..length {
         new[3 * i] = image.pixels[4 * i + 1];
@@ -109,12 +109,12 @@ fn argb_to_rgb(image : &mut Image) {
     image.pixels = new;
 }
 
-fn hsl_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+fn hsl_to_rgb(_image : &mut Image) {
+    panic!("Not implemented for hsl colourspace");
 }
 
-fn hsv_to_rgb(image : &mut Image) {
-    panic!("Not implemented");
+fn hsv_to_rgb(_image : &mut Image) {
+    panic!("Not implemented for hsv colourspace");
 }
 
 fn decode_jpeg(file : & String, image : &mut Image) {
@@ -159,7 +159,7 @@ fn decode_png(file : & String, image : &mut Image) {
         ColorSpace::RGBA    => rgba_to_rgb(image),
         ColorSpace::YCbCr   => ycbcr_to_rgb(image),
         ColorSpace::Luma    => luma_to_rgb(image),
-        ColorSpace::LumaA   => lumma_to_rgb(image),
+        ColorSpace::LumaA   => lumaa_to_rgb(image),
         ColorSpace::YCCK    => tcck_to_rgb(image),
         ColorSpace::CMYK    => cmyk_to_rgb(image),
         ColorSpace::BGR     => bgr_to_rgb(image),
@@ -178,7 +178,7 @@ pub fn decode_file(file : & String, image : &mut Image) -> Result<(),()> {
 
     match ext {
         "jpg" | "jpeg" | "JPG" | "JPEG"  => decode_jpeg(file, image),
-        "png" => decode_png(file, image),
+        "png" | "PNG" => decode_png(file, image),
         _ => panic!("unknown file type"),
     }
 
