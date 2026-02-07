@@ -1,5 +1,6 @@
 # Maintainer: Alexander Kirchberger <kirchbergeralex0@gmail.com>
-pkgname='rsimg' # '-bzr', '-git', '-hg' or '-svn'
+pkgname='rsimg-git' # '-bzr', '-git', '-hg' or '-svn'
+_pkgname='rsimg' 
 pkgver='r17.33bf3a2'
 pkgrel=1
 pkgdesc="Terminal image viewer with unicode characters"
@@ -42,5 +43,5 @@ build() {
 package() {
 #	cd "$pkgname"
 
-	install -Dm0755 -t "$pkgdir/usr/bin/" "target/release/$pkgname"
+	install -Dm0755 -t "$pkgdir/usr/bin/" "target/release/$_pkgname"
 }

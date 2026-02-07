@@ -1,6 +1,6 @@
 use zune_jpeg::JpegDecoder;
 use zune_png::PngDecoder;
-use zune_core::colorspace::ColorSpace;
+use zune_core::{colorspace::ColorSpace, options::DecoderOptions,bit_depth::BitDepth};
 use std::{io::BufReader};
 
 pub struct Image {
@@ -135,12 +135,24 @@ fn decode_png(file : & String, image : &mut Image) {
 
     let file_contents = BufReader::new(std::fs::File::open(file).unwrap());
     let mut decoder = PngDecoder::new(file_contents);
+    decoder.options().png_set_strip_to_8bit(true);
     
     image.pixels = decoder.decode_raw().unwrap();
     
     let image_info = decoder.info().unwrap();
     image.width = image_info.width as usize;
     image.height = image_info.height as usize;
+
+    if decoder.depth().unwrap() == BitDepth::Sixteen {
+
+    let mut new : Vec<u8> = vec![0; image.pixels.len()/2];
+    
+    for i in 0..image.pixels.len()/2 {
+        new[i] = image.pixels[2*i];
+    }
+    image.pixels = new;
+    }
+
 
     // These are all the png supported colourspaces
     match decoder.colorspace().unwrap() {
