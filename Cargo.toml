@@ -10,7 +10,7 @@ zune-jpeg = "0.5.12"
 zune-png = "0.5.1"
 zune-core = "0.5.1"
 
-[profile.releases]
+[profile.release]
 debug = false
 
 [profile.dev.package.zune-jpeg]
