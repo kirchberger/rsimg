@@ -5,7 +5,7 @@ Currently uses crossterm and zune as dependancies.
 This is a inspired by [catimg](https://github.com/posva/catimg/tree/main?tab=readme-ov-file).
 
 Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour, and will fit to window size.
-Use with rsimg {file_path}
+Use with rsimg image_file_path
 
 # To Do Items
 
