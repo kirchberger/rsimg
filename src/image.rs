@@ -1,6 +1,6 @@
 use zune_jpeg::JpegDecoder;
 use zune_png::PngDecoder;
-use zune_core::{colorspace::ColorSpace, options::DecoderOptions,bit_depth::BitDepth};
+use zune_core::{colorspace::ColorSpace, bit_depth::BitDepth};
 use std::{io::BufReader};
 
 pub struct Image {
