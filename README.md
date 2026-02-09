@@ -9,5 +9,6 @@ Use with rsimg image_file_path
 
 # Example of use
 <image src='https://github.com/kirchberger/rsimg/blob/main/recording/recording.gif' width=180/>
+
 # To Do Items
 
