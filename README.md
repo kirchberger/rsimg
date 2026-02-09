@@ -7,5 +7,8 @@ This is a inspired by [catimg](https://github.com/posva/catimg/tree/main?tab=rea
 Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour, and will fit to window size.
 Use with rsimg image_file_path
 
+# Example of use
+![til](./recording/recording.gif)
+
 # To Do Items
 
