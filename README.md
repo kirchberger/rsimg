@@ -8,6 +8,6 @@ Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour
 Use with rsimg image_file_path
 
 # Example of use
-<video src='./recording/recording.gif' width=180/>
+<video src='https://github.com/kirchberger/rsimg/blob/main/recording/recording.gif' width=180/>
 # To Do Items
 
