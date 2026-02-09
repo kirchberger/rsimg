@@ -8,7 +8,6 @@ Able to display Jpeg and Png types with rgb and rgba colourspaces and truecolour
 Use with rsimg image_file_path
 
 # Example of use
-![til](./recording/recording.gif)
 
 # To Do Items
 
