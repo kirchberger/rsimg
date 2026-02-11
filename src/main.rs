@@ -76,43 +76,35 @@ fn main() -> Result<(),String> {
 
     // Wait for cancel input
     loop { 
-        if poll(Duration::from_millis(50)).unwrap() {
+        if !poll(Duration::from_millis(200)).unwrap() { // Guard code as suggested from Anakin
+            continue;
+        }
 
-            match read().unwrap() {
-                Event::FocusGained => (),
-                Event::FocusLost => (),
-                Event::Key(event) => 
-                    if event.code == KeyCode::Char('c') && event.modifiers == KeyModifiers::CONTROL {
-                        break;
-                    },
-                Event::Mouse(_event) => (),
-                Event::Paste(_data) => (),
-                Event::Resize(_, _) => { 
-                    // Update window size
-                    screen::update_window(& mut window);
+        match read().unwrap() {
+            Event::Key(event) => 
+                if event.code == KeyCode::Char('c') && event.modifiers == KeyModifiers::CONTROL {
+                    break;
+                },
+            Event::Resize(_, _) => { 
+                // Update window size
+                screen::update_window(& mut window);
+                  
+                // Check if required image dimensions have changed
+                let height = image_downsample.height;
+                let width = image_downsample.width;
+                dimension_image(& image, &mut image_downsample, & window);
+
+                // If required dimensions have changed downsample image
+                if (height != image_downsample.height) | (width != image_downsample.width) {
+                    image::downsample(& image, &mut image_downsample);
+                }
+                screen::update_window(& mut window);
                     
-                    // Check if image dimensions have changed
-                    let height = image_downsample.height;
-                    let width = image_downsample.width;
-                    dimension_image(& image, &mut image_downsample, & window);
-
-                    // If required dimensions have changed re downsample image
-                    if (height != image_downsample.height) | (width != image_downsample.width) {
-                        image::downsample(& image, &mut image_downsample);
-                    }
-
-                    screen::update_window(& mut window);
-                    
-                    // Re-render image
-                    screen::render_image(& image_downsample, & window);},
-            }
-        } else {
-            // Timeout expired and no `Event` is available
+                // Re-render image
+                screen::render_image(& image_downsample, & window);},
+            _ => (),
         }
     }
-
-
-    // screen::usr_cancel();
 
     // Exit alternate screen
     screen::exit().unwrap();

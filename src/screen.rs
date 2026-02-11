@@ -1,6 +1,5 @@
-use std::{time::Duration,io::{BufWriter, Write}};
+use std::io::{BufWriter, Write};
 use crossterm::{
-    event::poll, 
     terminal::{window_size, enable_raw_mode, disable_raw_mode},
 };
 
@@ -55,14 +54,6 @@ pub fn update_window(window : &mut Window) {
     window.columns = win_size.columns as usize;
     window.rows = win_size.rows as usize;
 
-}
-
-pub fn usr_cancel() {
-    loop {
-        if  poll(Duration::from_millis(100)).unwrap() {
-            break;
-        }
-    }
 }
 
 // Render image in the center of the screen
